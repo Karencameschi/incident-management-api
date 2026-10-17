@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import com.karencameschi.incidentmanagement.dto.IncidentRequest;
+import jakarta.validation.Valid;
 
 import java.util.List;
 
@@ -36,18 +38,35 @@ public class IncidentController {
     }
 
     @PostMapping
-    public ResponseEntity<Incident> create(@RequestBody Incident incident) {
+    public ResponseEntity<Incident> create(
+            @Valid @RequestBody IncidentRequest request) {
+
+        Incident incident = new Incident(
+                request.getTitle(),
+                request.getDescription(),
+                request.getStatus(),
+                request.getPriority()
+        );
+
         Incident createdIncident = incidentService.create(incident);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(createdIncident);
+
     }
 
     @PutMapping("/{id}")
     public Incident update(
             @PathVariable Long id,
-            @RequestBody Incident incident) {
+            @Valid @RequestBody IncidentRequest request) {
+
+        Incident incident = new Incident(
+                request.getTitle(),
+                request.getDescription(),
+                request.getStatus(),
+                request.getPriority()
+        );
 
         return incidentService.update(id, incident);
     }
